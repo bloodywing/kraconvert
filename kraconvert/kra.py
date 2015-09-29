@@ -15,11 +15,14 @@ class Kra(object):
     merged_image = None
     basename = None
     icc = None
+    icc_path = None
     kra_name = None
 
     def __init__(self, krafile):
 
         kra = zipfile.ZipFile(krafile)
+
+        self.__merged_image_path= None
 
 
         self.filename = os.path.basename(krafile)
@@ -34,6 +37,14 @@ class Kra(object):
 
         self.icc = kra.read('{basename}/annotations/icc'.format(basename=self.kra_name))
 
+
+    @property
+    def merged_image_path(self):
+        return self.__merged_image_path
+
+    @merged_image_path.setter
+    def merged_image_path(self, path):
+        self.__merged_image_path = path
 
     def get_basename(self):
         return self.basename

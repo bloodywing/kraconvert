@@ -22,7 +22,7 @@ entry_points = {
 }
 
 package_data = {
-
+    'kraconvert': ['files/*.icc']
 }
 
 requires = [
