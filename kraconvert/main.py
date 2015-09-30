@@ -41,19 +41,30 @@ jpeg.add_argument(
 
 args = parser.parse_args()
 
+srgb = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'files', 'sRGB.icc')
+
 
 def extract_png(kras, outdir):
     for kra in kras:
         png = kra.get_merged_image()
         png_name = kra.get_basename() + '.png'
+        png_name_web = kra.get_basename() + '_srgb.png'
 
         png_dir = os.path.join(outdir, kra.get_basename(), 'png')
         os.makedirs(png_dir, exist_ok=True)
         kra.merged_image_path = os.path.join(png_dir, png_name)
 
-        with open(os.path.join(png_dir, png_name), 'w+b') as f:
+        with open(kra.merged_image_path, 'w+b') as f:
             f.write(png)
             f.close()
+
+        if args.webready:
+            im = Image.open(kra.merged_image_path)
+
+            # BUG: I don't know why but I need to use inPlace here or else
+            # my test png was just transparent
+            ImageCms.profileToProfile(im, kra.icc_path, srgb, inPlace=True)
+            im.save(os.path.join(png_dir, png_name_web), optimize=True)
 
 
 def extract_icc(kras, outdir):
@@ -63,7 +74,7 @@ def extract_icc(kras, outdir):
         os.makedirs(icc_dir, exist_ok=True)
         kra.icc_path = os.path.join(icc_dir, icc['name'])
 
-        with open(os.path.join(icc_dir, icc['name']), 'w+b') as f:
+        with open(kra.icc_path, 'w+b') as f:
             f.write(icc['data'])
             f.close()
 
@@ -79,13 +90,12 @@ def export_as_jpegs(kras, outdir):
             jpeg_name = kra.get_basename() + '{0}.jpeg'.format(size)
 
             new_im = im.thumbnail((size, size), Image.ANTIALIAS)
-            srgb = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'files', 'sRGB.icc')
 
             if args.webready:
                 im = ImageCms.profileToProfile(im, kra.icc_path, srgb)
-                im.save(os.path.join(jpeg_dir, jpeg_name), quality=args.jpeg)
+                im.save(os.path.join(jpeg_dir, jpeg_name), quality=args.jpeg, optimize=True)
             else:
-                im.save(os.path.join(jpeg_dir, jpeg_name), quality=args.jpeg, icc_profile=kra.icc)
+                im.save(os.path.join(jpeg_dir, jpeg_name), quality=args.jpeg, optimize=True, icc_profile=kra.icc)
 
 
 def main():
@@ -105,11 +115,11 @@ def main():
         for krafile in args.kras:
             kras.append(kra.Kra(krafile))
 
-    if args.png:
-        extract_png(kras, outdir)
-
     if args.icc:
         extract_icc(kras, outdir)
+
+    if args.png:
+        extract_png(kras, outdir)
 
     if args.jpeg:
         export_as_jpegs(kras, outdir)
