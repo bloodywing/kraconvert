@@ -22,7 +22,7 @@ class Kra(object):
 
         kra = zipfile.ZipFile(krafile)
 
-        self.__merged_image_path= None
+        self.__merged_image_path = None
 
 
         self.filename = os.path.basename(krafile)

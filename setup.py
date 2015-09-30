@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 
 
-import os
-import sys
-
 try:
     from setuptools import setup
 except ImportError:
@@ -17,7 +14,7 @@ packages = [
 
 entry_points = {
     'console_scripts': [
-        'kraconvert = kraconvert.main:run',
+        'kraconvert = kraconvert.main:main',
     ]
 }
 
@@ -26,7 +23,7 @@ package_data = {
 }
 
 requires = [
-    'lxml'
+    'lxml', 'pillow'
 ]
 
 setup(
