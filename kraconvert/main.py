@@ -82,7 +82,7 @@ def extract_icc(kras, outdir):
 def save_as_jpeg(im, kra, jpeg_name, jpeg_dir):
     if args.webready:
         im = ImageCms.profileToProfile(im, kra.icc_path, srgb)
-        im.save(os.path.join(jpeg_dir, jpeg_name), quality=args.jpeg, optimize=True)
+        im.save(os.path.join(jpeg_dir, jpeg_name), quality=args.jpeg, optimize=True, progression=True)
     else:
         im.save(os.path.join(jpeg_dir, jpeg_name), quality=args.jpeg, optimize=True, icc_profile=kra.icc)
 
