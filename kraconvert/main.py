@@ -79,24 +79,29 @@ def extract_icc(kras, outdir):
             f.close()
 
 
+def save_as_jpeg(im, kra, jpeg_name, jpeg_dir):
+    if args.webready:
+        im = ImageCms.profileToProfile(im, kra.icc_path, srgb)
+        im.save(os.path.join(jpeg_dir, jpeg_name), quality=args.jpeg, optimize=True)
+    else:
+        im.save(os.path.join(jpeg_dir, jpeg_name), quality=args.jpeg, optimize=True, icc_profile=kra.icc)
+
 def export_as_jpegs(kras, outdir):
     for kra in kras:
+        """
+        Create one jpeg with the original size
+        """
+        jpeg_dir = os.path.join(outdir, kra.get_basename(), 'jpeg')
+        os.makedirs(jpeg_dir, exist_ok=True)
+        im = Image.open(kra.merged_image_path)
+        jpeg_name = kra.get_basename() + '_original.jpeg'
+        save_as_jpeg(im, kra, jpeg_name, jpeg_dir)
+
         for size in args.sizes:
-            jpeg_dir = os.path.join(outdir, kra.get_basename(), 'jpeg')
-            os.makedirs(jpeg_dir, exist_ok=True)
-
             im = Image.open(kra.merged_image_path)
-
             jpeg_name = kra.get_basename() + '{0}.jpeg'.format(size)
-
-            new_im = im.thumbnail((size, size), Image.ANTIALIAS)
-
-            if args.webready:
-                im = ImageCms.profileToProfile(im, kra.icc_path, srgb)
-                im.save(os.path.join(jpeg_dir, jpeg_name), quality=args.jpeg, optimize=True)
-            else:
-                im.save(os.path.join(jpeg_dir, jpeg_name), quality=args.jpeg, optimize=True, icc_profile=kra.icc)
-
+            im.thumbnail((size, size), Image.ANTIALIAS)
+            save_as_jpeg(im, kra, jpeg_name, jpeg_dir)
 
 def main():
     kras = []
