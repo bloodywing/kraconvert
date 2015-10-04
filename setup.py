@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 try:
     from setuptools import setup
 except ImportError:
@@ -29,12 +26,22 @@ requires = [
 setup(
     name='kraconvert',
     version=kraconvert.__version__,
-    description='Konverts Krita .kra files onto something',
+    description='Konverts Krita .kra files into PNG and JPEG.',
+    url='https://github.com/bloodywing/kraconvert',
     packages=packages,
     package_data=package_data,
     entry_points=entry_points,
     install_requires=requires,
-    author='pierre',
+    author='Pierre Geier <bloodywing>',
     author_email='pierre@isartistic.biz',
     license='CC0',
+    keywords=['experimental', 'krita', 'converter', 'tool', 'utility'],
+    classifiers=[
+        'License :: CC0 1.0 Universal (CC0 1.0) Public Domain Dedication',
+        'Intended Audience :: End Users/Desktop',
+        'Programming Language :: Python :: 3',
+        'Topic :: Artistic Software',
+        'Topic :: Multimedia :: Graphics :: Graphics Conversion',
+        'Topic :: Utilities',
+    ]
 )

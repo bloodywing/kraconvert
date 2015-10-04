@@ -1,2 +1,2 @@
-__author__ = 'pierre'
-__version__ = '0.1'
+__author__ = 'pierre geier <bloodywing>'
+__version__ = '0.2'
