@@ -34,6 +34,7 @@ setup(
     install_requires=requires,
     author='Pierre Geier <bloodywing>',
     author_email='pierre@isartistic.biz',
+    download_url='https://github.com/bloodywing/kraconvert/tarball/{tag}'.format(tag=kraconvert.__version__),
     license='CC0',
     keywords=['experimental', 'krita', 'converter', 'tool', 'utility'],
     classifiers=[
