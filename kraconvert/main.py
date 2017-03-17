@@ -28,7 +28,7 @@ parser.add_argument(
 jpeg = parser.add_argument_group('JPEG Options')
 
 jpeg.add_argument(
-    '-j', '--jpeg', type=int, default=90, required=False
+    '-j', '--jpg', type=int, default=90, required=False
 )
 
 jpeg.add_argument(
@@ -48,13 +48,13 @@ def extract_png(kras, outdir):
     for kra in kras:
         png = kra.get_merged_image()
         png_name = kra.get_basename() + '.png'
-        png_name_web = kra.get_basename() + '_srgb.png'
+        png_name_web = kra.get_basename() + '-srgb.png'
 
         png_dir = os.path.join(outdir, kra.get_basename(), 'png')
         os.makedirs(png_dir, exist_ok=True)
         kra.merged_image_path = os.path.join(png_dir, png_name)
 
-        with open(kra.merged_image_path, 'w+b') as f:
+        with open(kra.merged_image_path, 'wb') as f:
             f.write(png)
             f.close()
 
@@ -74,7 +74,7 @@ def extract_icc(kras, outdir):
         os.makedirs(icc_dir, exist_ok=True)
         kra.icc_path = os.path.join(icc_dir, icc['name'])
 
-        with open(kra.icc_path, 'w+b') as f:
+        with open(kra.icc_path, 'wb') as f:
             f.write(icc['data'])
             f.close()
 
@@ -88,18 +88,16 @@ def save_as_jpeg(im, kra, jpeg_name, jpeg_dir):
 
 def export_as_jpegs(kras, outdir):
     for kra in kras:
-        """
-        Create one jpeg with the original size
-        """
-        jpeg_dir = os.path.join(outdir, kra.get_basename(), 'jpeg')
+        # Create one jpeg with the original size
+        jpeg_dir = os.path.join(outdir, kra.get_basename(), 'jpg')
         os.makedirs(jpeg_dir, exist_ok=True)
         im = Image.open(kra.merged_image_path)
-        jpeg_name = kra.get_basename() + '_original.jpeg'
+        jpeg_name = kra.get_basename() + '_original.jpg'
         save_as_jpeg(im, kra, jpeg_name, jpeg_dir)
 
         for size in args.sizes:
             im = Image.open(kra.merged_image_path)
-            jpeg_name = kra.get_basename() + '{0}.jpeg'.format(size)
+            jpeg_name = kra.get_basename() + '{0}.jpg'.format(size)
             im.thumbnail((size, size), Image.ANTIALIAS)
             save_as_jpeg(im, kra, jpeg_name, jpeg_dir)
 
